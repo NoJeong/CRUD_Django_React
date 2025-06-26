@@ -1,25 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import ListPage from './pages/ListPage';
+import DetailPage from './pages/DetailPage';
+import WritePage from './pages/WritePage';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App(){
+  return <BrowserRouter>
+    <nav>
+      <Link to="/">목록</Link> ｜ <Link to="/write">글쓰기</Link>
+    </nav>
+    <Routes>
+      <Route path="/" element={<ListPage/>}/>
+      <Route path="/posts/:id" element={<DetailPage/>}/>
+      <Route path="/write" element={<WritePage/>}/>
+    </Routes>
+  </BrowserRouter>;
 }
-
 export default App;
