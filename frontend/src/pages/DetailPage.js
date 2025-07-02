@@ -20,7 +20,8 @@ export default function DetailPage(){
     <h1>{post.title}</h1>
     <p>{post.content}</p>
     <small>{new Date(post.created).toLocaleString()}</small>
-    <button onClick={onDelete} style={{marginTop: '1rem'}}>
+    <button onClick={() => nav(`/posts/${id}/edit`)}>수정</button>
+    <button onClick={onDelete} style={{marginTop: '0.5rem'}}>
     삭제
     </button>
   </div>;
