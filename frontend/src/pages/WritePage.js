@@ -1,36 +1,60 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createPost } from '../api';
+import { Form, Button }    from 'react-bootstrap';
+import { useNavigate }      from 'react-router-dom';
+import { createPost }       from '../api';
 
-export default function WritePage(){
+export default function WritePage() {
   const [title, setTitle]     = useState('');
   const [content, setContent] = useState('');
-  const nav                   = useNavigate();
+  const [file, setFile]       = useState(null);
+  const nav                    = useNavigate();
 
   const onSubmit = async e => {
     e.preventDefault();
-   // 1) 새로 생성된 포스트 객체를 리턴받고
-   const newPost = await createPost({ title, content });
-   // 2) 그 id를 사용해 상세 페이지로 이동
-   nav(`/posts/${newPost.id}`);
+    const fd = new FormData();
+    fd.append('title', title);
+    fd.append('content', content);
+    if (file) fd.append('attachment', file);
+    const newPost = await createPost(fd);
+    nav(`/posts/${newPost.id}`);
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h2>새 글 쓰기</h2>
-      <input
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        placeholder="제목"
-        required
-      />
-      <textarea
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        placeholder="내용"
-        required
-      />
-      <button type="submit">저장</button>
-    </form>
+    <Form onSubmit={onSubmit}>
+      <Form.Group className="mb-3" controlId="postTitle">
+        <Form.Label>제목</Form.Label>
+        <Form.Control
+          type="text"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="제목을 입력하세요"
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="postContent">
+        <Form.Label>내용</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={5}
+          value={content}
+          onChange={e => setContent(e.target.value)}
+          placeholder="내용을 입력하세요"
+          required
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3" controlId="postFile">
+        <Form.Label>첨부 파일</Form.Label>
+        <Form.Control
+          type="file"
+          onChange={e => setFile(e.target.files[0] || null)}
+        />
+      </Form.Group>
+
+      <Button variant="primary" type="submit">
+        저장
+      </Button>
+    </Form>
   );
 }

@@ -20,13 +20,25 @@ export async function fetchPost(id) {
   return r.json();
 }
 
-export async function createPost(data) {
-  const r = await fetch(`${API_BASE}/posts/`, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(data),
+// 글 작성 (FormData)
+export async function createPost(formData) {
+  const res = await fetch(`${API_BASE}/posts/`, {
+    method: 'POST',
+    body: formData,      // FormData 인스턴스
+    // ↓ 헤더 제거!
   });
-  return r.json();
+  if (!res.ok) throw new Error(`생성 실패: ${res.status}`);
+  return res.json();
+}
+
+// 글 수정 (FormData)
+export async function updatePost(id, formData) {
+  const res = await fetch(`${API_BASE}/posts/${id}/`, {
+    method: 'PATCH',     // 또는 PUT
+    body: formData,
+  });
+  if (!res.ok) throw new Error(`수정 실패: ${res.status}`);
+  return res.json();
 }
 
 export async function deletePost(id) {
@@ -39,12 +51,30 @@ if (!res.ok) {
 }
 }
 
-export async function updatePost(id, data) {
-  const res = await fetch(`${API_BASE}/posts/${id}/`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(`업데이트 실패: ${res.status}`);
+// 댓글 목록 조회
+export async function fetchComments(postId) {
+  const res = await fetch(`${API_BASE}/comments/?post=${postId}`);
+  if (!res.ok) throw new Error('댓글 목록 조회 실패');
   return res.json();
 }
+
+// 댓글 등록
+export async function createComment(postId, content) {
+  const res = await fetch(`${API_BASE}/comments/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ post: postId, content }),
+  });
+  if (!res.ok) throw new Error('댓글 등록 실패');
+  return res.json();
+}
+
+// export async function updatePost(id, data) {
+//   const res = await fetch(`${API_BASE}/posts/${id}/`, {
+//     method: 'PUT',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify(data),
+//   });
+//   if (!res.ok) throw new Error(`업데이트 실패: ${res.status}`);
+//   return res.json();
+// }
